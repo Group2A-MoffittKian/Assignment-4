@@ -44,16 +44,18 @@ exports.read = function(req, res) {
 
 /* Update a listing */
 exports.update = function(req, res) {
-  var listing = req.body;
+  var listing = req.listing;
   Listing.findOne({name: listing.name}, function(err, listed) {
 	if (err) throw err;
-	listed.name = listing.name;
-	listed.code = listing.code;
-	if(listing.address) {
-	   listed.address = listing.address;
-      	   listed.coordinates.latitude =  req.results.latitude, 
-      	   listed.coordinates.longitde =  req.results.longitude
-    	};
+	listed.name = req.body.name;
+	listed.code = req.body.code;
+	listed.address = req.body.address;
+ 	if(req.results) {
+    		listing.coordinates = {
+      			latitude: req.results.lat, 
+      			longitude: req.results.lng
+    		};
+  	}
 	listed.save(function(err){
 		if (err) throw err;
 		res.json(listed);
